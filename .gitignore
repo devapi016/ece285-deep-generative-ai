@@ -1,0 +1,28 @@
+# Whitelist: this folder also holds lecture notes, so only homework folders are tracked.
+/*
+!/.gitignore
+!/README.md
+!/hw*/
+
+# Datasets, caches and environments (reproducible via each homework's README)
+**/chest_xray/
+**/archive.zip
+**/cache/
+**/.venv/
+**/__pycache__/
+**/.remember/
+
+# Large or personal artifacts
+*.pt
+**/results_both_classes/
+**/Homework_*
+**/ece285dga_*.pdf
+**/CODE_GUIDELINES.md
+
+# LaTeX build files (the final PDF is kept)
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
