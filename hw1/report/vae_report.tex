@@ -17,6 +17,11 @@
 
 \graphicspath{{../results/}}
 
+% Only URLs are coloured so the code link reads as a link; cross-references stay black.
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=black, citecolor=black}
+
+\newcommand{\codeurl}{https://github.com/devapi016/ece285-deep-generative-ai/tree/hw1-submission/hw1}
+
 \newcommand{\vect}[1]{\mathbf{#1}}
 
 \title{ECE 285 Homework 1: Generating Chest X-Rays with a Variational Autoencoder}
@@ -57,7 +62,7 @@ logits (8.7\,M parameters in total). We minimise
 \underbrace{-\mathbb{E}_{q_\phi(\vect{z}\mid\vect{x})}\log p_\theta(\vect{x}\mid\vect{z})}_{\text{BCE, summed over pixels}}
 + \beta_t\, \mathrm{KL}\!\left(q_\phi(\vect{z}\mid\vect{x})\,\|\,\mathcal{N}(\vect{0},\vect{I})\right),
 \end{equation}
-using the reparameterisation $\vect{z}=\boldsymbol{\mu}+\boldsymbol{\sigma}\odot\boldsymbol{\epsilon}$.
+with $\vect{z}=\boldsymbol{\mu}+\boldsymbol{\sigma}\odot\boldsymbol{\epsilon}$.
 The KL weight $\beta_t$ is annealed linearly from $0.05$ to $1$ over the first
 20 epochs to avoid early posterior collapse; for all later epochs (and for every
 reported number) $\beta=1$, i.e.\ $\mathcal{L}$ is the true negative ELBO.
@@ -66,19 +71,19 @@ and taking the Bernoulli mean $\sigma(\text{logits})$.
 
 \paragraph{Hyperparameters.}
 Table~\ref{tab:hparams} lists the settings, all set in \texttt{config.py}.
-Training takes 4.3 minutes on a laptop RTX~5060. Code:
-\url{https://github.com/devapi016/ece285-deep-generative-ai/tree/hw1-submission/hw1}.
+Training takes 4.3 minutes on a laptop RTX~5060.
 
 \paragraph{Evaluation protocol.}
 FID and IS use PyTorch-Ignite's \texttt{FID} and \texttt{InceptionScore}
 metrics as in the Ignite GAN-evaluation tutorial: images in $[0,1]$ are
 repeated to three channels and bilinearly resized to $299\times299$ before
 torchvision's InceptionV3. Ignite's FID needs equally sized real and candidate
-sets, so each candidate set has 390 images and is compared with the 390
-held-out test X-rays. We repeat this over 5 random draws and report
-mean\,$\pm$\,std. This pipeline gives small absolute FIDs (the tutorial reports
+sets, so each candidate set has 390 images, compared with the 390 held-out
+test X-rays over 5 random draws (mean\,$\pm$\,std). This pipeline gives small absolute FIDs (the tutorial reports
 $\approx$0.016 for a DCGAN on CelebA), so real training images are scored
 against the same reference as a floor.
+
+\paragraph{Code.} \href{\codeurl}{\mbox{https://github.com/devapi016/ece285-deep-generative-ai/tree/hw1-submission/hw1}}
 
 \begin{table}[t]
   \centering
@@ -127,7 +132,7 @@ against the same reference as a floor.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.94\linewidth]{loss_curves.png}
+  \includegraphics[width=0.88\linewidth]{loss_curves.png}
   \caption{Per-image training curves (epoch~1 is off-scale). Held-out losses
     are computed with $\beta=1$ after every epoch. The dashed line is the KL
     annealing schedule.}
@@ -180,7 +185,6 @@ so the decoder itself cannot produce high-frequency texture. This is the
 expected failure mode of a pixel-wise factorised likelihood, which
 averages over the uncertain positions of fine rib and vessel edges. IS is barely informative here, because ImageNet classes do not
 describe X-rays: even real test images only reach $1.96$, versus $1.74$
-for samples. A perceptual or adversarial reconstruction loss, or a hierarchical
-latent space (e.g.\ NVAE), would be the natural next steps.
+for samples. A perceptual or adversarial loss would be the natural next step.
 
 \end{document}
